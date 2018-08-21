@@ -8,11 +8,12 @@ RFMapper::~RFMapper(){}
 String RFMapper::map(RFEntity entity){
 	String packetId = String(entity.packetId,1);
 	String time = String(entity.time,1);
-	String temperature = String(entity.temperature,1);
+  float temp = entity.temperature;
+	String temperature = String(temp / 100, 1);
 	String pressure = String(entity.pressure,1);
-	String acc_x = String(entity.acc_x,1);
-	String acc_y = String(entity.acc_y,1);
-	String acc_z = String(entity.acc_z,1);
+	String acc_x = String(entity.acc_x, 2);
+	String acc_y = String(entity.acc_y, 2);
+	String acc_z = String(entity.acc_z, 2);
 	String altitude = String(entity.altitude,1);
 	String state = String(entity.state);
 	String lat = String(entity.lat,1);

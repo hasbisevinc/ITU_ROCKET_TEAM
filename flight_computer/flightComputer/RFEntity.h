@@ -1,16 +1,18 @@
 #ifndef RFENTITIY_H
 #define RFENTITIY_H
 
+#include <arduino.h>
+
 class RFEntity { 
 public:
-	double packetId;
+	int16_t packetId;
 	double time;
-	float temperature;
-	double pressure;
-	double acc_x;
-	double acc_y;
-	double acc_z;
-	double altitude;
+	int16_t temperature;
+	float pressure;
+	float acc_x;
+	float acc_y;
+	float acc_z;
+	float altitude;
 	int state;
 	double lat;
 	double lon;
