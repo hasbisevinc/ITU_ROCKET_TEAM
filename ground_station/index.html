@@ -1,0 +1,465 @@
+<!-- ./node_modules/.bin/electron-rebuild -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <style>
+    .bottom-container {
+      position: absolute; 
+      height:200px; 
+      width:100%; 
+      bottom:0; background-color: #272727;
+    }
+
+    .bottom-container-1-4 {
+      width: 25%;
+      height: 100%;
+      float: left;
+      box-sizing: border-box;
+      border: 1px solid #747474;
+      position: relative;
+    }
+    
+    .bottom-container-1-8 {
+      width: 12.5%;
+      height: 100%;
+      float: left;
+      box-sizing: border-box;
+      border: 1px solid #747474;
+      position: relative;
+    }
+
+    .bottom-container-1-2 {
+      width: 50%;
+      height: 100%;
+      float: left;
+      box-sizing: border-box;
+      border: 1px solid #747474;
+      position: relative;
+    }
+    .gauge-style {
+      transform: rotate(-45deg); 
+      width:250px; 
+      height:150px; 
+      margin-top:20px;
+      margin-left:-15px;
+    }
+
+    .gauge-text-style {
+      position: absolute;
+      color:#FFFFFF; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+      font-size:25px; 
+      line-height:40px; 
+      top:97px; 
+      text-align: center; 
+      left:120px;
+    }
+    
+    .gauge-value-style {
+      font-size:55px;
+    }
+
+    .gauge-unit-style {
+      font-size:25px;
+    }
+
+    .heading {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+    }
+
+    .heading-gauge {
+      width: 250px;
+      margin: auto;
+      margin-top: -70px;
+      
+    }
+
+    h3 {
+      color:#FFFFFF; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+      font-size:22px; 
+      line-height:10px; 
+    }
+
+    h2 {
+      color:#272727; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+      font-size:22px; 
+      line-height:10px; 
+    }
+
+    .small-value {
+      color:#FFFFFF; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+      font-size:18px; 
+      line-height:5px; 
+    }
+
+    .version-text {
+      position: absolute;
+      color:#272727; 
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+      font-size:12px; 
+    }
+
+    
+    .top-container {
+      position: absolute; 
+      height:100px; 
+      width:100%;
+      background-color: #272727;
+    }
+
+    .w3-table,.w3-table-all{border-collapse:collapse;border-spacing:0;width:100%;display:table}.w3-table-all{border:1px solid #ccc}
+.w3-bordered tr,.w3-table-all tr{border-bottom:1px solid #ddd}.w3-striped tbody tr:nth-child(even){background-color:#f1f1f1}
+.w3-table-all tr:nth-child(odd){background-color:#fff}.w3-table-all tr:nth-child(even){background-color:#f1f1f1}
+.w3-hoverable tbody tr:hover,.w3-ul.w3-hoverable li:hover{background-color:#ccc}.w3-centered tr th,.w3-centered tr td{text-align:center}
+.w3-table td,.w3-table th,.w3-table-all td,.w3-table-all th{padding:8px 8px;display:table-cell;text-align:left;vertical-align:top}
+.w3-table th:first-child,.w3-table td:first-child,.w3-table-all th:first-child,.w3-table-all td:first-child{padding-left:16px}
+.w3-blue,.w3-hover-blue:hover{color:#fff!important;background-color:#2196F3!important}
+.w3-light-blue,.w3-hover-light-blue:hover{color:#000!important;background-color:#87CEEB!important}
+.w3-brown,.w3-hover-brown:hover{color:#fff!important;background-color:#795548!important}
+.w3-cyan,.w3-hover-cyan:hover{color:#000!important;background-color:#00bcd4!important}
+.w3-blue-grey,.w3-hover-blue-grey:hover,.w3-blue-gray,.w3-hover-blue-gray:hover{color:#fff!important;background-color:#607d8b!important}
+.w3-red,.w3-hover-red:hover{color:#fff!important;background-color:#FF652F!important}
+
+.raw-data-div {
+  overflow-y: scroll !important;
+  display:block !important;
+  height:410px !important;
+  width:49.5% !important;
+}
+
+.table-container {
+  top: 105px;
+  position: relative;
+}
+
+.map-container {
+  top: 105px;
+  position: relative;
+}
+
+.raw-data-container {
+  top: 90px;
+  height:380px !important;
+  width:49.5% !important;
+  right: 0;
+  position: absolute;
+}
+
+.raw-text-area {
+  width:100%;
+  height:100%;
+}
+
+.hide-container {
+  visibility: hidden;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+  </style>
+  
+<script src="models/DataModel.js"></script>
+<script src="domains/DataDomain.js"></script>
+<script src="rf_module/RFEntity.js"></script>
+<script src="database_module/DatabaseEntity.js"></script>
+<script src="mappers/DataDomainToDataModel.js"></script>
+<script src="mappers/RFEntityToDataDomain.js"></script>
+
+  <body style="margin:0px">
+    <div class="top-container">
+        <div class="bottom-container-1-4">
+            <h3 style="margin-left:10px">Connection</h3>
+            <div style="margin-top:-10px; margin-left:10px; margin-right:10px;">            
+                <select id="comports" style="width:49%; margin-bottom:5px; float:left"></select>
+                <select id="baudRates" style="width:49%; margin-bottom:5px; float:right">
+                    <option value="9600">9600</option>
+                    <option value="115200">115200</option>
+                </select>
+                <div style="clear:left"></div>
+                <button id="connectButton" style="width:49%;" onclick="window.connectButtonEvent()">Connect</button>
+                <button id="refreshPortButton" style="width:49%;" onclick="window.refreshComPortList()">Refresh Ports</button>
+            </div>
+        </div>
+        <div class="bottom-container-1-2">
+            <h3 style="width:100%; text-align: center ">Manual Control</h3>
+            <div style="margin-top:-10px; margin-left:10px; margin-right:10px; ">            
+                <button id="connectButton" style="width:49%; height:46px;" onclick="">Open First Parachute</button>
+                <button id="refreshPortButton" style="width:49%; height:46px;" onclick="">Open First Parachute</button>
+            </div>
+        </div>
+        <div class="bottom-container-1-8">
+            <h3 style="margin-left:10px; ">Window</h3>
+            <div style="margin-top:-12px; margin-left:10px; margin-right:10px; ">            
+                <button id="connectButton" style="width:99%; margin-bottom:5px;" onclick="window.showRaw()">Raw Data</button>
+                <button id="refreshPortButton" style="width:99%;" onclick="window.showMap()">Maps</button>
+            </div>
+        </div>
+        <div class="bottom-container-1-8">
+          <span class="version-text">Version 1.0</span>
+            <img src="logo.jpg" style="width:100%; height:100%;">
+        </div>
+    </div>
+<div id="mapContainer" class="hide-container map-container" style="position:absolute">
+    <img src="https://btmagazin.net/wp-content/uploads/2016/07/google_maps_yenilendi-1024x483.jpg" style="width:1200px; position: absolute">
+</div>
+<div id="rawContainer">
+    <div class="table-container">
+        <div class="raw-data-div">
+          <table class="w3-table-all" id="rowTable">
+              <thead>
+                <tr class="w3-red">
+                  <th>P. Id</th>
+                  <th>Time</th>
+                  <th>Temp</th>
+                  <th>Pressure</th>
+                  <th>Altitude</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+          </table>
+        </div>
+      </div>
+      <div class="raw-data-container">
+        <h2>Raw Data</h2>
+        <textarea id="rawData" class="raw-text-area"></textarea>
+      </div>
+</div>
+
+
+    <div class="bottom-container">
+        <div class="bottom-container-1-4">
+            <canvas id="gauge" class="gauge-style"></canvas>
+            <span class="gauge-text-style">
+                &nbsp;&nbsp;Altitude<br>
+                <span class="gauge-value-style" id="altitude">1552</span>
+                <span class="gauge-unit-style">m</span>
+            </span>
+        </div>
+        <div class="bottom-container-1-2">
+            <div style="position:absolute; margin-left: 20px;">
+                <h3>Acc</h3>
+                <p class="small-value">X: <span id="acc_x">12</span></p>
+                <p class="small-value">Y: <span id="acc_y">12</span></p>
+                <p class="small-value">Z: <span id="acc_z">12</span></p>
+            </div>
+            <div style="position:absolute; margin-right: 20px; right:0">
+                <h3>Longitude</h3>
+                <p class="small-value" id="long">26.1233</p>
+                <h3>Latitude</h3>
+                <p class="small-value" id="lat">49.123</p>
+                <h3>Pressure</h3>
+                <p class="small-value"><span id="pressure">12312</span> psi</p>
+            </div>
+            <div style="position:absolute;bottom:0; width:100%; text-align: center">
+                <h3>State:<span id="pressure">Beklemede</span></h3>
+            </div>
+          <div class="heading-gauge">
+              <img class="head_rotate heading" src="img/horizon_back.svg">
+              <img class="head_rotate heading" src="img/horizon_ball.svg">
+              <img class="head_rotate heading" src="img/horizon_circle.svg">
+              <img class="heading" src="img/horizon_mechanics.svg">
+          </div>
+        </div>
+        <div class="bottom-container-1-4">
+            <div style="align-content: center">
+                <canvas id="gauge2" class="gauge-style"></canvas>
+                <span class="gauge-text-style">
+                    Temperature<br>
+                    <span style="font-size:55px;" id="temperature">30</span>
+                    <span class="gauge-unit-style">°C</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div id="preview-textfield"></div>
+
+<div id="myModal" class="modal" style="display: none">
+  <div class="modal-content">
+    <span id="closeButton" class="close">&times;</span>
+    <p id="modalText">Some text in the Modal..</p>
+  </div>
+
+</div>
+
+<script>
+    
+    var opts = {
+      angle: -0.25, // The span of the gauge arc
+      lineWidth: 0.2, // The line thickness
+      radiusScale: 1, // Relative radius
+      pointer: {
+        length: 0.61, // // Relative to gauge radius
+        strokeWidth: 0.035, // The thickness
+        color: '#FF652F' // Fill color
+      },
+      limitMax: false,     // If false, max value increases automatically if value > maxValue
+      limitMin: false,     // If true, the min value of the gauge will be fixed
+      colorStart: '#14A76C',   // Colors
+      colorStop: '#14A76C',    // just experiment with them
+      strokeColor: '#747474',  // to see which ones work best for you
+      generateGradient: true,
+      highDpiSupport: true,     // High resolution support
+      
+    };
+    var Gauge = require('./gauge.js');
+    var target = document.getElementById("gauge");
+    altitudeGauge = new Gauge.Gauge(target).setOptions(opts);
+    altitudeGauge.maxValue = 3000;
+    altitudeGauge.set(0);
+    var opts = {
+      angle: -0.25,
+      lineWidth: 0.2,
+      radiusScale:0.9,
+      pointer: {
+        length: 0.6,
+        strokeWidth: 0.05,
+        color: '#FF652F'
+      },
+      staticLabels: {
+        font: "14px sans-serif",
+        labels: [30, 40, 75],
+        color: "#FFFFFF",
+        fractionDigits: 0
+      },
+      staticZones: [
+         {strokeStyle: "#30B32D", min: 0, max: 30},
+         {strokeStyle: "#FFE400", min: 30, max: 40},
+         {strokeStyle: "#F03E3E", min: 40, max: 75}
+      ],
+      renderTicks: {
+        divisions: 5,
+        divWidth: 1.1,
+        divLength: 0.27,
+        divColor: '#000000',
+        subDivisions: 3,
+        subLength: 0.5,
+        subWidth: 0.6,
+        subColor: '#272727'
+      },
+      limitMax: false,
+      limitMin: false,
+      highDpiSupport: true
+    };
+var target = document.getElementById('gauge2'); // your canvas element
+var temperatureGauge = new Gauge.Gauge(target).setOptions(opts); // create sexy gauge!
+temperatureGauge.maxValue = 75; // set max gauge value
+temperatureGauge.animationSpeed = 81; // set animation speed (32 is default value)
+temperatureGauge.set(0); // set actual value
+
+</script>
+    <script>
+      require('./renderer.js')
+      require('./uiPresenter.js')
+    </script>
+
+<script>
+    var dataMapper = new DataDomainToDataModel();
+    var rfMapper = new RFEntityToDataDomain();
+    window.messageHandler = function(message) {
+        message = message + "";
+        rfEntity = new RFEntity();
+        rfEntity.create(new Date(), message);
+        domain = rfMapper.map(rfEntity);
+        model = dataMapper.map(domain);
+        handleUI(model);
+        fillTable(model);
+    }
+
+    window.showErrorDialog = function(message) {
+        message = message + "";
+        var modal = document.getElementById('myModal');
+        var span = document.getElementById("closeButton");
+        var modalText = document.getElementById("modalText");
+        modalText.innerHTML = message;
+        modal.style.display = "block";
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    }
+
+    function handleUI(model) {
+      gpsLong = document.getElementById("long");
+      gpsLat = document.getElementById("lat");
+      pressure = document.getElementById("pressure");
+      acc_x = document.getElementById("acc_x");
+      acc_y = document.getElementById("acc_y");
+      acc_z = document.getElementById("acc_z");
+      altitude = document.getElementById("altitude");
+      temperature = document.getElementById("temperature");
+
+      gpsLong.innerHTML = model.long;
+      gpsLat.innerHTML = model.lat;
+      pressure.innerHTML = model.pressure;
+      altitude.innerHTML = model.altitude;
+      acc_x.innerHTML = model.acc_x;
+      acc_y.innerHTML = model.acc_y;
+      acc_z.innerHTML = model.acc_z;
+      altitudeGauge.set(model.altitude);
+      temperature.innerHTML = model.temperature;
+      temperatureGauge.set(model.temperature);
+    }
+
+    function fillTable(model) {
+      var table = document.getElementById("rowTable");
+      var row = table.insertRow(1);
+      row.classList.add("w3-hover-blue");
+      row.insertCell(0).innerHTML = model.packetId;
+      row.insertCell(1).innerHTML = model.time;
+      row.insertCell(2).innerHTML = model.temperature;
+      row.insertCell(3).innerHTML = model.pressure;
+      row.insertCell(4).innerHTML = model.altitude;
+      row.insertCell(5).innerHTML = model.lat;
+      row.insertCell(6).innerHTML = model.long;
+      row.insertCell(7).innerHTML = model.state;
+    }
+
+
+</script>
+
+  </body>
+</html>
