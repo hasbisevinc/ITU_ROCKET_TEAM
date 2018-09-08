@@ -7,6 +7,9 @@ ITU Rocket Team Vecihi III flight computer software
 
 
 ## Arduino Dependencies
+### TinyGPS++
+
+https://github.com/mikalhart/TinyGPSPlus
 
 ### MPU9250 and BMP280
 
