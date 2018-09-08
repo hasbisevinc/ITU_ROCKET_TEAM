@@ -27,10 +27,12 @@ Adafruit_BMP280 bme;
 double referenceLevel;// = 1013.25;
 long startTime;
 long lastTimeRfSent = 0;
+long lastTimeExAltitudeSet = 0;
 bool rfReceivedData = false;
 char receivedSecurityByte = 0;
 char receivedStateByte = 0;
 bool hasBeenLaunched = false;
+float exAltitude = 0;
 
 void setup(){
   Serial.begin(9600);
@@ -68,7 +70,7 @@ void loop(){
     setTemperature();
     setAcc();
 
-    verticalSpeedDiff = verticalSpeedCalculater(timeDiff, rfEntity.altitude);
+    verticalSpeedDiff = verticalSpeedCalculater(timeDiff, rfEntity.altitude - exAltitude);
   }
 
   if (state.gpsState == 1) {
@@ -116,14 +118,22 @@ void loop(){
   }
 
   sendDataIfTimeFlow();
+  setExAltitudeIfTimeFlow();
+}
 
+void setExAltitudeIfTimeFlow() {
+  if (millis() - lastTimeExAltitudeSet > 500) {
+    exAltitude = getAltitude();
+    lastTimeExAltitudeSet = millis();  
+  }
 }
 
 void sendDataIfTimeFlow() {
   if (millis()- lastTimeRfSent > 1000) {
     lastTimeRfSent = millis();
-    timeInterruptHandler();
     increasePacketId();
+    rfEntity.state = state.mainState;
+    timeInterruptHandler();
   }
 }
 
