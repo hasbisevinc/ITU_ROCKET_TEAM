@@ -296,7 +296,7 @@
                 <p class="small-value"><span id="pressure">12312</span> psi</p>
             </div>
             <div style="position:absolute;bottom:0; width:100%; text-align: center">
-                <h3>State:<span id="pressure">Beklemede</span></h3>
+                <h3>State:<span id="state_text">Waiting</span></h3>
             </div>
           <div class="heading-gauge">
               <img class="head_rotate heading" src="img/horizon_back.svg">
@@ -442,6 +442,26 @@ temperatureGauge.set(0); // set actual value
       altitudeGauge.set(model.altitude);
       temperature.innerHTML = model.temperature;
       temperatureGauge.set(model.temperature);
+      handleStateText(model);
+    }
+
+    function handleStateText(model) {
+      stateTextView = document.getElementById("state_text");
+      currentState = model.state;
+      
+      if (currentState == "2") {
+        stateTextView.innerHTML = "Launched";
+      } else if (currentState == "5") {
+        stateTextView.innerHTML = "Drag Opened";
+      } else if (currentState == "6") {
+        stateTextView.innerHTML = "Dragging";
+      } else if (currentState == "7") {
+        stateTextView.innerHTML = "Main Opened";
+      } else if (currentState == "8") {
+        stateTextView.innerHTML = "Landing";
+      } else {
+        stateTextView.innerHTML = "Waiting";
+      }
     }
 
     function fillTable(model) {
