@@ -14,7 +14,10 @@
 #define BMP_MOSI 11 
 #define BMP_CS 10
 
+#define buzzerPin 7
+
 #define SECURITY_BYTE 0x55
+
 
 RFEntity rfEntity;
 RFMapper rfMapper;
@@ -28,6 +31,7 @@ double referenceLevel;// = 1013.25;
 long startTime;
 long lastTimeRfSent = 0;
 long lastTimeExAltitudeSet = 0;
+long buzzerTime = 0;
 bool rfReceivedData = false;
 char receivedSecurityByte = 0;
 char receivedStateByte = 0;
@@ -208,6 +212,8 @@ void stateZeroHandler() {
 
 void initSystem() {
   //TODO
+  pinMode(buzzerPin, OUTPUT);
+  digitalWrite(buzzerPin, LOW);      
 }
 
 void rocketLandingHandler() {
@@ -215,7 +221,12 @@ void rocketLandingHandler() {
 }
 
 void openBuzzer() {
-  //TODO
+  if (millis()- buzzerTime > 100) {
+    buzzerTime = millis();
+    digitalWrite(buzzerPin, HIGH);
+  } else{
+    digitalWrite(buzzerPin, LOW);
+  }
 }
 
 void launchDragParachute() {
