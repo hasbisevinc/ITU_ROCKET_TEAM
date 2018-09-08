@@ -6,7 +6,7 @@ RFMapper::RFMapper(){
 RFMapper::~RFMapper(){}
 
 String RFMapper::map(RFEntity entity){
-	String packetId = String(entity.packetId,1);
+	String packetId = String(entity.packetId);
 	String time = String(entity.time,1);
   float temp = entity.temperature;
 	String temperature = String(temp / 100, 1);

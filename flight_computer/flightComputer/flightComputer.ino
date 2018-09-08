@@ -26,12 +26,11 @@ Adafruit_BMP280 bme;
 
 double referenceLevel;// = 1013.25;
 long startTime;
+long lastTimeRfSent = 0;
 bool rfReceivedData = false;
 char receivedSecurityByte = 0;
 char receivedStateByte = 0;
 bool hasBeenLaunched = false;
-
-int16_t packetId = 0;
 
 void setup(){
   Serial.begin(9600);
@@ -60,7 +59,6 @@ void loop(){
   setTemperature();
   setAcc();
 
-  float altitudeDiff = getAltitude();
   //TODO: initial value of verticalSpeedDiff?
   float verticalSpeedDiff = 0;
 
@@ -70,11 +68,8 @@ void loop(){
     setTemperature();
     setAcc();
 
-    altitudeDiff = getAltitude();
-    verticalSpeedDiff = verticalSpeedCalculater(timeDiff, altitudeDiff);
+    verticalSpeedDiff = verticalSpeedCalculater(timeDiff, rfEntity.altitude);
   }
-
-  increasePacketId();
 
   if (state.gpsState == 1) {
     setGPS();
@@ -92,7 +87,7 @@ void loop(){
       break;
 
     case 1:
-      stateOneHandler();ğ
+      stateOneHandler();
       break;
 
     case 2:
@@ -120,6 +115,20 @@ void loop(){
       
   }
 
+  sendDataIfTimeFlow();
+
+}
+
+void sendDataIfTimeFlow() {
+  if (millis()- lastTimeRfSent > 1000) {
+    lastTimeRfSent = millis();
+    timeInterruptHandler();
+    increasePacketId();
+  }
+}
+
+void timeInterruptHandler() {
+  sendData(rfMapper.map(rfEntity));
 }
 
 void stateEightHandler() {
@@ -191,10 +200,6 @@ void initSystem() {
   //TODO
 }
 
-void timeInterruptHandler() {
-  sendData(rfMapper.map(rfEntity));
-}
-
 void rocketLandingHandler() {
   openBuzzer();
 }
@@ -217,7 +222,7 @@ long pressureReferenceCalculater(){
   for (pressureCounter = 0; pressureCounter < 100; pressureCounter ++) {
     total += getPressure();
   }
-  return total/100;
+  return total/10000;
 }
 
 void sendData(String message) {
@@ -231,7 +236,7 @@ void rfreceivedDataHandler() {
 }
 
 void increasePacketId() {
-  packetId ++;
+  rfEntity.packetId ++;
 }
 
 void setGPS() {
