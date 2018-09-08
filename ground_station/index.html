@@ -142,7 +142,7 @@
 
 .map-container {
   top: 105px;
-  position: relative;
+  position: fixed;
 }
 
 .raw-data-container {
@@ -242,8 +242,7 @@
             <img src="logo.jpg" style="width:100%; height:100%;">
         </div>
     </div>
-<div id="mapContainer" class="hide-container map-container" style="position:absolute">
-    <img src="https://btmagazin.net/wp-content/uploads/2016/07/google_maps_yenilendi-1024x483.jpg" style="width:1200px; position: absolute">
+<div id="map" class="hide-container map-container">
 </div>
 <div id="rawContainer">
     <div class="table-container">
@@ -326,8 +325,40 @@
 
 </div>
 
+<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+<style>
+  
+  #map { position: fixed;  bottom:0; right:0; left:0;  }
+</style>
 <script>
+    window.L = require('leaflet')
+
+    var map = L.map('map').setView([38.356622, 34.0283394], 13);
     
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    }).addTo(map);
+    var marker = undefined;
+    
+    var clearMarker = function(){
+      if (marker != undefined) {
+        map.removeLayer(marker)
+        marker = undefined;
+      }
+    }
+    
+    var addMarker = function(x, y){
+      clearMarker();
+      marker = new L.Marker([x, y], {draggable:false});
+      map.addLayer(marker);
+    }
+
+    var addMarkerIfVisible = function (x,y) {
+      var mapContainer = document.getElementById("map");
+      if (!mapContainer.classList.contains("hide-container")) {
+        addMarker(x, y);
+      }
+    }
+
     var opts = {
       angle: -0.25, // The span of the gauge arc
       lineWidth: 0.2, // The line thickness
@@ -443,6 +474,7 @@ temperatureGauge.set(0); // set actual value
       temperature.innerHTML = model.temperature;
       temperatureGauge.set(model.temperature);
       handleStateText(model);
+      addMarkerIfVisible(model.long, model.lat);
     }
 
     function handleStateText(model) {
