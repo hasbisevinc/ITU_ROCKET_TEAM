@@ -17,8 +17,8 @@
 #define BMP_CS 10
 
 #define buzzerPin 7
-#define gpsRxPin 9
-#define gpsTxPin 10
+#define gpsRxPin 10
+#define gpsTxPin 9
 
 #define SECURITY_CHAR 'X'
 #define END_CHAR 'Y'
@@ -58,6 +58,7 @@ int verticalVelocityHowManyTimes = 0;
 void setup(){
   ss.begin(9600);
   XBEE_SERIAL.begin(9600);
+  DEBUG_SERIAL.begin(9600);
 
   mpu.begin();
 
@@ -95,7 +96,7 @@ void loop(){
 
     verticalSpeedDiff = verticalSpeedCalculater(timeDiff, rfEntity.altitude - exAltitude);
   }
-
+  state.gpsState = 1;     // Test için burada SİLİNECEK
   if (state.gpsState == 1) {
     setGPS();
   }
@@ -310,7 +311,7 @@ void increasePacketId() {
 
 // TODO, will be check here
 void setGPS() {
-    if(ss.available() > 0) {
+    while(ss.available() > 0) {
       if (gps.encode(ss.read())) {
           if (gps.location.isValid())
           {

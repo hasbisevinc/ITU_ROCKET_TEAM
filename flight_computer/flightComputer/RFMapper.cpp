@@ -16,8 +16,8 @@ String RFMapper::map(RFEntity entity){
 	String acc_z = String(entity.acc_z, 2);
 	String altitude = String(entity.altitude,1);
 	String state = String(entity.state);
-	String lat = String(entity.lat,1);
-	String lon = String(entity.lon,1);
+	String lat = String(entity.lat,5);
+	String lon = String(entity.lon,5);
 
 	String message = "";
 	
