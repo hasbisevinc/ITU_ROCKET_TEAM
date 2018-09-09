@@ -24,6 +24,7 @@
 #define END_CHAR 'Y'
 #define DRAG_PARACHUTE_CHAR 'D'
 #define MAIN_PARACHUTE_CHAR 'M'
+#define RE_REFERENCE_CHAR 'R'
 
 #define XBEE_SERIAL Serial
 #define DEBUG_SERIAL Serial
@@ -301,6 +302,9 @@ void rfreceivedDataHandler() {
       launchDragParachute();
     } else if (receivedDataBuffer[1] == MAIN_PARACHUTE_CHAR) {
       launchMainParachute();
+    }else if (receivedDataBuffer[1] == RE_REFERENCE_CHAR) {
+      referenceLevel = pressureReferenceCalculater();
+      state.mainState = 0;
     }
   }
 }

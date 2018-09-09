@@ -36,6 +36,10 @@ window.openMainParachute = function () {
   send("XMY");
 }
 
+window.rereferencing = function () {
+  send("XRY");
+}
+
 initPage();
 
 function initPage() {
