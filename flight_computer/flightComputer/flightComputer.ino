@@ -3,6 +3,8 @@
 
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
 #include "MPU9250.h"
 
 #include "RFEntity.h"
@@ -15,6 +17,8 @@
 #define BMP_CS 10
 
 #define buzzerPin 7
+#define gpsRxPin 9
+#define gpsTxPin 10
 
 #define SECURITY_CHAR 'X'
 #define END_CHAR 'Y'
@@ -33,7 +37,11 @@ MPU9250 mpu = MPU9250();
 
 Adafruit_BMP280 bme;
 
-double referenceLevel;// = 1013.25;
+TinyGPSPlus gps;
+SoftwareSerial ss(gpsRxPin, gpsTxPin);
+
+double referenceLevel;  // before launch reference level
+float seaLevelPressure = 1013.25;
 long startTime;
 long lastTimeRfSent = 0;
 long lastTimeExAltitudeSet = 0;
@@ -45,10 +53,12 @@ bool hasBeenLaunched = false;
 float exAltitude = 0;
 char receivedDataBuffer[2];
 int receivedDataIndex = 0;
+int verticalVelocityHowManyTimes = 0;
 
 void setup(){
+  ss.begin(9600);
   XBEE_SERIAL.begin(9600);
-  DEBUG_SERIAL.begin(9600);
+
   mpu.begin();
 
   if (!bme.begin()) {  
@@ -109,6 +119,7 @@ void loop(){
       stateTwoHandler(verticalSpeedDiff);
       break;
     case 3:
+      break;
     case 4:
       // empty for future usages
       break;
@@ -156,7 +167,7 @@ void checkIfDataReceived() {
 
 void setExAltitudeIfTimeFlow() {
   if (millis() - lastTimeExAltitudeSet > 500) {
-    exAltitude = getAltitude();
+    exAltitude = getAltitudeDiff();
     lastTimeExAltitudeSet = millis();  
   }
 }
@@ -210,9 +221,13 @@ void stateFiveHandler() {
 
 void stateTwoHandler(float verticalSpeedDiff) {
   if (verticalSpeedDiff < 0) {
-    state.mainState = 5;
-    state.gpsState = 0;
-    state.hizState = 0;
+    if(verticalVelocityHowManyTimes > 2){
+      state.mainState = 5;
+      state.gpsState = 0;
+      state.hizState = 0;
+    } else{
+      verticalVelocityHowManyTimes ++;      
+    }
   } else {
     state.mainState = 2;
     state.gpsState = 0;
@@ -267,12 +282,12 @@ void launchMainParachute() {
 }
 
 long pressureReferenceCalculater(){
-  int pressureCounter;
+  int altitudeCounter;
   long total = 0;
-  for (pressureCounter = 0; pressureCounter < 100; pressureCounter ++) {
-    total += getPressure();
+  for (altitudeCounter = 0; altitudeCounter < 100; altitudeCounter ++) {
+    total += getAltitude();
   }
-  return total/10000;
+  return total/100;
 }
 
 void sendData(String message) {
@@ -293,8 +308,17 @@ void increasePacketId() {
   rfEntity.packetId ++;
 }
 
+// TODO, will be check here
 void setGPS() {
-  
+    if(ss.available() > 0) {
+      if (gps.encode(ss.read())) {
+          if (gps.location.isValid())
+          {
+            rfEntity.lat = gps.location.lat();
+            rfEntity.lon = gps.location.lng();
+          }
+      }
+    }  
 }
 
 void setTemperature() {
@@ -307,24 +331,24 @@ float getPressure() {
 }
 
 float getAltitude() {
-   return bme.readAltitude(referenceLevel);
+   return bme.readAltitude(seaLevelPressure);
+}
+
+float getAltitudeDiff() {
+   return bme.readAltitude(seaLevelPressure) - referenceLevel;
 }
 
 void setPressureAndAltitude() {
   rfEntity.pressure = getPressure();
-  rfEntity.altitude = getAltitude();
+  rfEntity.altitude = getAltitudeDiff();
 }
 
 void setAcc() {
-  mpu.set_accel_range(RANGE_4G);
+  mpu.set_accel_range(RANGE_8G);  // 8G will be experienced by the sensor
   mpu.get_accel_g();
   rfEntity.acc_x = mpu.x_g;
   rfEntity.acc_y = mpu.y_g;
   rfEntity.acc_z = mpu.z_g;
-}
-
-float getPressureDiff() {
-  return rfEntity.pressure - referenceLevel;
 }
 
 float verticalSpeedCalculater(long timeDiff, float altitudeDiff) {
