@@ -226,8 +226,8 @@
         <div class="bottom-container-1-2">
             <h3 style="width:100%; text-align: center ">Manual Control</h3>
             <div style="margin-top:-10px; margin-left:10px; margin-right:10px; ">            
-                <button id="connectButton" style="width:49%; height:46px;" onclick="">Open First Parachute</button>
-                <button id="refreshPortButton" style="width:49%; height:46px;" onclick="">Open First Parachute</button>
+                <button id="connectButton" style="width:49%; height:46px;" onclick="window.openDragParachute()">Open Drag Parachute</button>
+                <button id="refreshPortButton" style="width:49%; height:46px;" onclick="window.openMainParachute()">Open Main Parachute</button>
             </div>
         </div>
         <div class="bottom-container-1-8">
@@ -331,6 +331,7 @@
   #map { position: fixed;  bottom:0; right:0; left:0;  }
 </style>
 <script>
+
     window.L = require('leaflet')
 
     var map = L.map('map').setView([38.356622, 34.0283394], 13);

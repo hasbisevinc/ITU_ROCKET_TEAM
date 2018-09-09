@@ -28,6 +28,14 @@ window.connectButtonEvent = function () {
   }
 }
 
+window.openDragParachute = function () {
+  send("XDY");
+}
+
+window.openMainParachute = function () {
+  send("XMY");
+}
+
 initPage();
 
 function initPage() {

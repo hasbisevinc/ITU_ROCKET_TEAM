@@ -16,7 +16,13 @@
 
 #define buzzerPin 7
 
-#define SECURITY_BYTE 0x55
+#define SECURITY_CHAR 'X'
+#define END_CHAR 'Y'
+#define DRAG_PARACHUTE_CHAR 'D'
+#define MAIN_PARACHUTE_CHAR 'M'
+
+#define XBEE_SERIAL Serial
+#define DEBUG_SERIAL Serial
 
 
 RFEntity rfEntity;
@@ -37,13 +43,16 @@ char receivedSecurityByte = 0;
 char receivedStateByte = 0;
 bool hasBeenLaunched = false;
 float exAltitude = 0;
+char receivedDataBuffer[2];
+int receivedDataIndex = 0;
 
 void setup(){
-  Serial.begin(9600);
+  XBEE_SERIAL.begin(9600);
+  DEBUG_SERIAL.begin(9600);
   mpu.begin();
 
   if (!bme.begin()) {  
-    Serial.println("Could not find a valid BMP280 sensor, check wiring!");
+    DEBUG_SERIAL.println("Could not find a valid BMP280 sensor, check wiring!");
     //TODO check here. should we use while(1)
     while (1);
   }
@@ -123,6 +132,26 @@ void loop(){
 
   sendDataIfTimeFlow();
   setExAltitudeIfTimeFlow();
+  checkIfDataReceived();
+}
+
+void checkIfDataReceived() {
+  if (XBEE_SERIAL.available() > 0) {
+    char receivedData = XBEE_SERIAL.read();
+    if (receivedData == SECURITY_CHAR) {
+      receivedDataIndex = 0;
+    }
+    if (receivedData == END_CHAR) {
+      rfreceivedDataHandler();
+      receivedDataIndex = 0;
+      return;
+    }
+    if (receivedDataIndex == 2) {
+      receivedDataIndex = 0;
+    }
+    receivedDataBuffer[receivedDataIndex] = receivedData;
+    receivedDataIndex ++;
+  }
 }
 
 void setExAltitudeIfTimeFlow() {
@@ -247,12 +276,16 @@ long pressureReferenceCalculater(){
 }
 
 void sendData(String message) {
-  Serial.print(message);
+  XBEE_SERIAL.print(message);
 }
 
 void rfreceivedDataHandler() {
-  if (receivedSecurityByte == SECURITY_BYTE) {
-    state.mainState = receivedStateByte;
+  if (receivedDataBuffer[0] == SECURITY_CHAR) {
+    if (receivedDataBuffer[1] == DRAG_PARACHUTE_CHAR) {
+      launchDragParachute();
+    } else if (receivedDataBuffer[1] == MAIN_PARACHUTE_CHAR) {
+      launchMainParachute();
+    }
   }
 }
 
