@@ -19,6 +19,8 @@
 #define buzzerPin 7
 #define gpsRxPin 10
 #define gpsTxPin 9
+#define pyroDrag 6
+#define pyroMain 8
 
 #define SECURITY_CHAR 'X'
 #define END_CHAR 'Y'
@@ -235,6 +237,8 @@ void stateTwoHandler(float verticalSpeedDiff) {
     state.gpsState = 0;
     state.hizState = 1;
   }
+  digitalWrite(pyroMain, LOW);    
+  digitalWrite(pyroDrag, LOW); 
 }
 
 void stateOneHandler() {
@@ -248,6 +252,9 @@ void stateOneHandler() {
     state.gpsState = 1;
     state.hizState = 0;
   }
+
+  digitalWrite(pyroMain, LOW);    
+  digitalWrite(pyroDrag, LOW); 
 }
 
 void stateZeroHandler() {
@@ -259,7 +266,12 @@ void stateZeroHandler() {
 void initSystem() {
   //TODO
   pinMode(buzzerPin, OUTPUT);
-  digitalWrite(buzzerPin, LOW);      
+  digitalWrite(buzzerPin, LOW);
+  
+  pinMode(pyroMain, OUTPUT);
+  digitalWrite(pyroMain, LOW);    
+  pinMode(pyroDrag, OUTPUT);
+  digitalWrite(pyroDrag, LOW);          
 }
 
 void rocketLandingHandler() {
@@ -276,11 +288,11 @@ void openBuzzer() {
 }
 
 void launchDragParachute() {
-  // TODO
+  digitalWrite(pyroDrag, HIGH);
 }
 
 void launchMainParachute() {
-  // TODO
+  digitalWrite(pyroMain, HIGH);
 }
 
 long pressureReferenceCalculater(){
